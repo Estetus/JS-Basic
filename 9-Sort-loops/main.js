@@ -7,9 +7,7 @@ function sortArray(arr, sort) {
         (sort === "asc" && arr[i] > arr[j]) ||
         (sort === "desc" && arr[i] < arr[j])
       ) {
-        let el = arr[i];
-        arr[i] = arr[j];
-        arr[j] = el;
+        [arr[i], arr[j]] = [arr[j], arr[i]];
       }
     }
   }

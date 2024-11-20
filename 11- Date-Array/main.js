@@ -1,37 +1,49 @@
-const data = ["10-02-2022", "тест", "11/12/2022", "00/13/2022", "41/12/2024"];
+const data = [
+  "29-02-2024", // true - 2024 високосный год
+  "29-02-2023", // false - 2023 не високосный год
+  "02/29/2024", // true - EN формат записи 29-02-2024
+  "02/29/2023", // false - EN формат записи 29-02-2023
+  "31-09-2024", // false - 31 сентября не бывает
+  "30-09-2024", // true - Тут проблем нет - корректная дата
+  "30d-09m-2024y", // true / false - корректная дата при условии parseInt для валидации числа, при Number - нет
+  "30.01.2024", // true / false - зависит от парсинга разделителей
+];
 
-const isValidDate = (date) => {
-  const parts = date.split(/[-\/]/);
+const isValidDate = (date, isEnFormat) => {
+  const parts = date.split(/[-\/.]/);
 
   if (parts.length !== 3) return false;
 
-  const [day, month, year] = parts;
+  //  let day, month, year;
+
+  if (isEnFormat) {
+    [month, day, year] = parts;
+  } else {
+    [day, month, year] = parts;
+  }
 
   if (day.length !== 2 || month.length !== 2 || year.length !== 4) return false;
 
-  if (
-    day < "01" ||
-    day > "31" ||
-    month < "01" ||
-    month > "12" ||
-    year < "1000" ||
-    year > "9999"
-  )
-    return false;
+  // Проверка на число
+  const d = parseInt(day, 10);
+  const m = parseInt(month, 10);
+  const y = parseInt(year, 10);
+  if (isNaN(d) || isNaN(m) || isNaN(y)) return false;
 
-  if (
-    (month === "04" || month === "06" || month === "09" || month === "11") &&
-    day > "30"
-  )
+  if (d < 1 || d > 31 || m < 1 || m > 12 || y < 1000 || y > 9999) return false;
+  if ((m === 4 || m === 6 || m === 9 || m === 11) && d > 30) return false;
+  if (m === 2 && d > 29) return false;
+  if (m === 2 && d === 29 && !(y % 4 === 0 && (y % 100 !== 0 || y % 400 === 0)))
     return false;
-
-  if (month === "02" && day > "29") return false;
 
   return true;
 };
 
 const formattedData = data
-  .filter(isValidDate)
+  .filter((date) => {
+    const isEnFormat = date.includes("/");
+    return isValidDate(date, isEnFormat);
+  })
   .map((date) => date.split(/[-\/]/).join("-"));
 
 console.log(formattedData);
