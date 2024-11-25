@@ -4,13 +4,11 @@ const toDoList = {
   description: '',
   order: 0,
   addTask: function (titleName, priority, descr) {
-    const newId = this.id++;
-    const newOrder = this.order++;
     const newTask = {
       title: titleName,
-      id: newId,
+      id: this.id++,
       priority,
-      order: newOrder,
+      order: this.order++,
       description: descr
     };
     this.tasks.push(newTask);
